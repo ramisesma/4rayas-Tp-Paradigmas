@@ -11,9 +11,10 @@ object logica {
 		new Jugador (color = "rojo"), 
 		new Jugador (color ="azul")
 	]
+	var indiceTurnos = 0
 
 	
-	method iniciarLogica() {
+	method cargarLogica() {
 		self.cargarCasillerosLibres()
 		jugadores.forEach{j => j.cargarPosiciones()}
 	}
@@ -29,11 +30,8 @@ object logica {
 		columnasOcupadas.add(columna)
 	}
 	
-	//Dada una columna seleccionada, se va a buscar la fila libre para ocupar
-	method buscarFila(columna) = casillerosLibres.get(columna)
-	method ocuparFila(columna, fila) {
-		fila.remove(fila.size()-1)
-	}
+
+	method ocuparFila(columna, fila) { utils.obtenerColumna(columna, casillerosLibres).remove(fila)}
 	
 	method quiereJugar (columna) {
 		if (self.estaOcupada(columna)) {
@@ -41,34 +39,48 @@ object logica {
 		}
 		self.juegaTurno(self.jugadorActual(), columna)
 	}
-
+	
 	method juegaTurno(_jugadorActual, columna) {
 		//sino que el jugador se guarde la información acerca de la casilla que ocupó, y que delegue en algún otro lado la responsabilidad de 
 		//controlar cuándo gano por medio de la verificación de combinaciones ganadores
-		const fila = self.buscarFila(columna)
-		_jugadorActual.guardarPosicion(columna, fila.last())
-		self.ocuparFila(columna, fila)
+		const fila = utils.obtenerColumna(columna, casillerosLibres).last() 
 		self.cambiarTurno()
+		_jugadorActual.guardarPosicion(columna, fila)
+		if (_jugadorActual.esGanador(columna, fila)) {
+			//LÓGICA DE DESTRUCCIÓN DESDE ACÁ por ahora
+			console.println("Es ganador el jugador: "+ _jugadorActual.color())
+			self.volverAJugar()
+		} else {
+			self.ocuparFila(columna, fila)
+			
+		}
 	}
-
 
 	//manejo de turnos
 	method cambiarTurno() {
-		jugadores = jugadores.reverse()
+		indiceTurnos = (indiceTurnos+1) %  jugadores.size()
 	} //habría que modificar las posiciones de la lista
-	method jugadorActual () = jugadores.first()
+	method jugadorActual () = jugadores.get(indiceTurnos)
 
 	//limpia el estado interno de la lógica del juego, en caso de que el juego tenga un ganador 
 	method limpiar () {
 		casillerosLibres.clear()
 		columnasOcupadas.clear()
+		jugadores.forEach{j => j.limpiar()}
+		indiceTurnos = 0
 	}
 
 	method volverAJugar () {
 		self.limpiar()
-		jugadores.forEach{j => j.limpiar()}
 		tablero.volverAJugar()
+		//crear todo devuelta para que el ciclo esté medianamente "hecho"
+		self.volverACrear()
 	}
+
+	method volverACrear() {
+		// self.iniciarLogica()
+		tablero.iniciarTablero()
+	}	
 
 }
 
@@ -100,11 +112,16 @@ class Jugador{
 		posicionesOcupadas.put(columna, nuevaLista)
 	}
 	
-
-	
+	method esGanador (columna, fila) = verificador.verificarAlgunaCombinacion(columna, fila, posicionesOcupadas)
+		
+	method estaOcupada(columna, fila) {
+		const lista = posicionesOcupadas.get(columna)
+		return lista.get(fila) == 1
+	}
 	//limpia el estado interno de un jugador, el diccionario de posiciones ocupadas
 	method limpiar() {
 		posicionesOcupadas.clear()
+		
 	}
 }
 

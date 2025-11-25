@@ -5,11 +5,10 @@ import logica.*
 program cuatroEnRaya {
 	game.title("4 en Raya")
 	game.width(25)
-	game.height(15)
+	game.height(15)	
 
 	tablero.iniciarTablero()
-	logica.iniciarLogica()
-	// tablero.mostrarJugadaTest()
+	logica.cargarLogica()
 	(0..6).forEach {numero => keyboard.num(numero).onPressDo{logica.quiereJugar(numero) }}
 
 

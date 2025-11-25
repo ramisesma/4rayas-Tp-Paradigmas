@@ -1,6 +1,19 @@
 import tablero.*
 import wollok.game.*
-
+import logica.*
+import utils.*
 
 describe "Test cases para la inicialización y visuales" {
+}
+
+describe "Tests cases para las posiciones Ocupadas de un jugador" {
+    test "Jugador rojo ocupa una posicion" { 
+        const jugador = new Jugador (color = "rojo")
+        jugador.cargarPosiciones()
+        jugador.guardarPosicion(0, 0)
+        assert.that(jugador.estaOcupada(0,0))
+    }   
+
+    
+
 }
