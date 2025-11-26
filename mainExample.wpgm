@@ -1,16 +1,15 @@
 import wollok.game.*
 import tablero.* 
 import logica.*
+import menu.*
 
 program cuatroEnRaya {
-	game.title("4 en Raya")
-	game.width(25)
-	game.height(15)	
+    game.title("4 en Raya")
+    game.width(14)
+    game.height(12)    
 
-	tablero.iniciarTablero()
-	logica.cargarLogica()
-	(0..6).forEach {numero => keyboard.num(numero).onPressDo{logica.quiereJugar(numero) }}
+    // Iniciar el menú principal
+    menu.iniciar()
 
-
-	game.start()
+    game.start()
 }
