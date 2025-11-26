@@ -3,22 +3,41 @@ import tablero.*
 import logica.*
 
 object menu {
-    var property enMenu = true
+    var pantallaActual = 0 // 0: título, 1: controles/reglas, 2: juego iniciado
     const property position = game.origin()
     
-    method image() = "menu.png" // Asegúrate de tener esta imagen en assets
+    method image() {
+        if (pantallaActual == 0) {
+            return "menu.png" // Imagen del nombre del juego
+        } else if (pantallaActual == 1) {
+            return "controles.png" // Imagen con controles y reglas
+        } else {
+            return "menu.png" // Por si acaso, aunque no debería mostrarse
+        }
+    }
     
     method iniciar() {
+        pantallaActual = 0
         game.addVisual(self)
-        keyboard.enter().onPressDo({ self.empezarJuego() })
+        keyboard.enter().onPressDo({ self.siguientePantalla() })
+    }
+    
+    method siguientePantalla() {
+        if (pantallaActual == 0) {
+            // Pasar de título a controles/reglas
+            pantallaActual = 1
+            game.removeVisual(self)
+            game.addVisual(self)
+        } else if (pantallaActual == 1) {
+            // Pasar de controles a iniciar el juego
+            pantallaActual = 2
+            self.empezarJuego()
+        }
     }
     
     method empezarJuego() {
-        if (enMenu) {
-            enMenu = false
-            game.removeVisual(self)
-            self.configurarJuego()
-        }
+        game.removeVisual(self)
+        self.configurarJuego()
     }
     
     method configurarJuego() {
@@ -34,7 +53,7 @@ object menu {
     }
     
     method volverAlMenu() {
-        enMenu = true
+        pantallaActual = 0
         game.addVisual(self)
     }
 }
@@ -47,13 +66,8 @@ object pantallaGanadorRojo {
     method mostrar() {
         game.addVisual(self)
         
-        /*// Mostrar mensaje de ganador
-        game.schedule(500, {
-            game.say(self, "¡Ganó el jugador rojo! Presiona R para reiniciar")
-        })*/
-        
         // Configurar tecla R para reiniciar
-        game.schedule(2000, {
+        game.schedule(1000, {
             keyboard.r().onPressDo({ self.reiniciar() })
         })
     }
@@ -72,13 +86,8 @@ object pantallaGanadorAzul {
     method mostrar() {
         game.addVisual(self)
         
-        /*// Mostrar mensaje de ganador
-        game.schedule(500, {
-            game.say(self, "¡Ganó el jugador azul! Presiona R para reiniciar")
-        })*/
-        
         // Configurar tecla R para reiniciar
-        game.schedule(2000, {
+        game.schedule(1000, {
             keyboard.r().onPressDo({ self.reiniciar() })
         })
     }
@@ -97,13 +106,8 @@ object pantallaEmpate {
     method mostrar() {
         game.addVisual(self)
         
-        /*// Mostrar mensaje de empate
-        game.schedule(500, {
-            game.say(self, "¡Empate! Presiona R para reiniciar")
-        })*/
-        
         // Configurar tecla R para reiniciar
-        game.schedule(2000, {
+        game.schedule(1000, {
             keyboard.r().onPressDo({ self.reiniciar() })
         })
     }
@@ -111,5 +115,19 @@ object pantallaEmpate {
     method reiniciar() {
         game.removeVisual(self)
         logica.volverAJugar()
+    }
+}
+
+object mensajeColumnaOcupada {
+    const property position = game.origin()
+    
+    method image() = "columnaOcupada.png"
+    
+    method mostrar() {
+        game.addVisual(self)
+        // Remover el mensaje después de 3 segundos
+        game.schedule(2000, {
+            game.removeVisual(self)
+        })
     }
 }

@@ -44,7 +44,7 @@ object logica {
         // Solo permitir jugar si el juego está activo
         if (juegoActivo) {
             if (self.estaOcupada(columna)) {
-                game.say(tablero, "¡Columna ocupada! Elige otra")
+                mensajeColumnaOcupada.mostrar()
             } else {
                 self.juegaTurno(self.jugadorActual(), columna)
             }
@@ -82,13 +82,6 @@ object logica {
         } else {
             pantallaGanadorAzul.mostrar()
         }
-    }
-
-    method mostrarEmpate() {
-        game.say(tablero, "¡Empate! Presiona R para reiniciar")
-        game.schedule(2000, {
-            keyboard.r().onPressDo({ self.volverAJugar() })
-        })
     }
 
     //manejo de turnos
