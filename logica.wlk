@@ -20,6 +20,7 @@ object logica {
         self.cargarCasillerosLibres()
         jugadores.forEach{j => j.cargarPosiciones()}
         juegoActivo = true // Activar el juego cuando se carga
+        //Acá se podría crear las instancias de las clases 
     }
 
 

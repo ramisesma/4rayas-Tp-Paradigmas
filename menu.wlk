@@ -58,6 +58,26 @@ object menu {
     }
 }
 
+class Pantalla {
+    const property position = game.origin()
+    var property tematicaPantalla 
+
+    method image () = tematicaPantalla + ".png"
+    method mostrar () {
+        game.addVisual(self)
+
+        game.schedule(1000, {
+            keyboard.r().onPressDo({ self.reiniciar() })
+        })
+    }
+    method reiniciar() {
+        game.removeVisual(self)
+        logica.volverAJugar()
+    }
+}
+
+// salvo mensajeColumnaOcupada, los demás se pueden abstraer en clases y crear las diferentes instancias pasandoles por Parámetro la temática
+// de la pantalla: azul, rojo, empate... 
 object pantallaGanadorRojo {
     const property position = game.origin()
     
