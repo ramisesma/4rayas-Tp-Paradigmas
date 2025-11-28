@@ -145,8 +145,7 @@ object mensajeColumnaOcupada {
     
     method mostrar() {
         game.addVisual(self)
-        // Remover el mensaje después de 3 segundos
-        game.schedule(2000, {
+        game.schedule(1000, {
             game.removeVisual(self)
         })
     }
