@@ -14,7 +14,21 @@ describe "Tests cases para las posiciones Ocupadas de un jugador" {
         assert.that(jugador.estaOcupada(0,0))
     }   
 
+    test "Limpiar jugador elimina todas las posiciones ocupadas" {
+        const jugador = new Jugador (color = "azul", tematica = "ganadorAzul")
+        jugador.cargarPosiciones()
+        jugador.guardarPosicion(0, 0)
+        jugador.guardarPosicion(1, 1)
+        jugador.limpiar()
+        jugador.cargarPosiciones()
+        assert.notThat(jugador.estaOcupada(0, 0))
+    }
 
-    
+        test "Posición no ocupada devuelve falso" {
+        const jugador = new Jugador (color = "rojo", tematica = "ganadorRojo")
+        jugador.cargarPosiciones()
+        jugador.guardarPosicion(2, 3)
+        assert.notThat(jugador.estaOcupada(5, 5))
+    }
 
 }

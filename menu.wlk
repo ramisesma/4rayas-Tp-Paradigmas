@@ -3,26 +3,10 @@ import tablero.*
 import logica.*
 
 object menu {
-    // var pantallaActual = 0 // 0: título, 1: controles/reglas, 2: juego iniciado
     const property position = game.origin()
     method image () = "menu.png"
 
-    // method image() {
-    //     if (pantallaActual == 0) {
-    //         return "menu.png" // Imagen del nombre del juego
-    //     } else if (pantallaActual == 1) {
-    //         return "controles.png" // Imagen con controles y reglas
-    //     } else {
-    //         return "menu.png" // Por si acaso, aunque no debería mostrarse
-    //     }
-    // }
-    
-    // method iniciar() {
-    //     pantallaActual = 0
-    //     game.addVisual(self)
-    //     keyboard.enter().onPressDo({ self.siguientePantalla() })
-    // }
-    
+
   method iniciar () {
     game.addVisual(self)
     keyboard.enter().onPressDo({ self.mostrarControles() })
@@ -36,28 +20,6 @@ object menu {
     method empezarJuego() {
         self.configurarJuego()
     }
-
-
-
-    // method siguientePantalla() {
-    //     if (pantallaActual == 0) {
-    //         // Pasar de título a controles/reglas
-    //         pantallaActual = 1
-    //         game.removeVisual(self)
-    //         game.addVisual(self)
-    //     } else if (pantallaActual == 1) {
-    //         // Pasar de controles a iniciar el juego
-    //         pantallaActual = 2
-    //         self.empezarJuego()
-    //     }
-    // }
-    
-    // method siguientePantalla(tematica) {
-    //     tematica.mostrar()
-    //     tematica.remover()
-    //     self.configurarJuego()
-    // }
-
     
     method configurarJuego() {
         tablero.iniciarTablero()
@@ -71,10 +33,7 @@ object menu {
         }
     }
     
-    // method volverAlMenu() {
-    //     pantallaActual = 0
-    //     game.addVisual(self)
-    // }
+
     method volverAlMenu() {
         self.iniciar()
     }
@@ -122,9 +81,3 @@ class PantallaColumnaOcupada inherits Pantalla {
         })
     }
 }
-
-// salvo mensajeColumnaOcupada, los demás se pueden abstraer en clases y crear las diferentes instancias pasandoles por Parámetro la temática
-// de la pantalla: azul, rojo, empate... 
-
-
-

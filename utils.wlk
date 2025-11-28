@@ -16,31 +16,31 @@ import logica.*
         method obtenerFilaMatriz (fila, matriz) = (0..6).map{ c => matriz.get(c).get(fila) }
         method obtenerColumna(columna, matriz) = matriz.get(columna)
         
-        // Método para obtener diagonal ascendente (de abajo-izquierda a arriba-derecha)
+        // metodo para obtener diagonal ascendente 
         method obtenerDiagonalAscendente(columna, fila, matriz) {
-            // Calcular el punto de inicio de la diagonal (abajo-izquierda)
+            // calcular el punto de inicio de la diagonal
             const diferencia = columna.min(fila)
             const cInicio = columna - diferencia
             const fInicio = fila - diferencia
             
-            // Calcular cuántas posiciones tiene esta diagonal
+            // calcular cuantas posiciones tiene esta diagonal
             const longitud = (6 - cInicio + 1).min(5 - fInicio + 1)
             
-            // Recolectar la diagonal
+            // recolectar la diagonal
             return (0..longitud-1).map{ i => matriz.get(cInicio + i).get(fInicio + i) }
         }
         
-        // Método para obtener diagonal descendente (de arriba-izquierda a abajo-derecha)
+        // metodo para obtener diagonal descendente
         method obtenerDiagonalDescendente(columna, fila, matriz) {
-            // Calcular el punto de inicio de la diagonal (arriba-izquierda)
+            // calcular el punto de inicio de la diagonal 
             const diferencia = columna.min(5 - fila)
             const cInicio = columna - diferencia
             const fInicio = fila + diferencia
             
-            // Calcular cuántas posiciones tiene esta diagonal
+            // calcula cuantas posiciones tiene esta diagonal
             const longitud = (6 - cInicio + 1).min(fInicio + 1)
             
-            // Recolectar la diagonal
+            // recolectar la diagonal
             return (0..longitud-1).map{ i => matriz.get(cInicio + i).get(fInicio - i) }
         }
     }

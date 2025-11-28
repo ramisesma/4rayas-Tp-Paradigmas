@@ -1,13 +1,13 @@
 import wollok.game.*
 import tablero.*
 import utils.*
-import menu.* // Importa menu, pantallaGanador y pantallaEmpate
+import menu.* 
 
-//lógica del juego
+//logica del juego
 object logica {
     const casillerosLibres  = new Dictionary ()
     const columnasOcupadas = []
-    var juegoActivo = false // Controla si se puede jugar o no
+    var juegoActivo = false
     const pantallaEmpate = new Pantalla (tematicaPantalla = "empate")
     const pantallaColumnaOcupada = new PantallaColumnaOcupada (tematicaPantalla = "columnaOcupada")
 
@@ -21,9 +21,7 @@ object logica {
     method cargarLogica() {
         self.cargarCasillerosLibres()
         jugadores.forEach{j => j.cargarPosiciones()}
-        juegoActivo = true // Activar el juego cuando se carga
-        // const pantallaEmpate =
-        //Acá se podría crear las instancias de las clases
+        juegoActivo = true 
     }
 
 
@@ -45,7 +43,6 @@ object logica {
     }
 
     method quiereJugar (columna) {
-        // Solo permitir jugar si el juego está activo
         if (juegoActivo) {
             if (self.estaOcupada(columna)) {
                 pantallaColumnaOcupada.mostrar()
@@ -61,7 +58,7 @@ object logica {
 
         if (_jugadorActual.esGanador(columna, fila)) {
             console.println("Es ganador el jugador: " + _jugadorActual.color())
-            juegoActivo = false // Desactivar el juego cuando hay ganador
+            juegoActivo = false // desactivar el juego cuando hay ganador
             self.mostrarPantallaGanador(_jugadorActual.tematica())
         } else {
             self.ocuparFila(columna, fila)
@@ -69,10 +66,10 @@ object logica {
             if (utils.obtenerColumna(columna, casillerosLibres).isEmpty()) {
                 self.ocuparColumna(columna)
             }
-            // Verificar si hay empate (todas las columnas ocupadas)
+            // verificar si hay empate (todas las columnas ocupadas)
             if (columnasOcupadas.size() == 7) {
                 console.println("¡Empate!")
-                juegoActivo = false // Desactivar el juego cuando hay empate
+                juegoActivo = false // desactivar el juego cuando hay empate
                 pantallaEmpate.mostrar()
             } else {
                 self.cambiarTurno()
@@ -80,14 +77,7 @@ object logica {
         }
     }
 
-    // method mostrarPantallaGanador(color) {
-    //     if (color == "rojo") {
-    //         pantallaGanadorRojo.mostrar()
-    //     } else {
-    //         pantallaGanadorAzul.mostrar()
-    //     }
 
-    // }
     method mostrarPantallaGanador(tematica) {
         tematica.mostrar()
     }
@@ -99,7 +89,7 @@ object logica {
 
     method jugadorActual () = jugadores.get(indiceTurnos)
 
-    //limpia el estado interno de la lógica del juego, en caso de que el juego tenga un ganador
+    //limpia el estado interno de la logica del juego, en caso de que el juego tenga un ganador
     method limpiar () {
         casillerosLibres.clear()
         columnasOcupadas.clear()
@@ -121,7 +111,7 @@ object logica {
 }
 
 class Jugador{
-    var property color //string, NO objeto
+    var property color 
     var property tematica
     const posicionesOcupadas  = new Dictionary ()
 
