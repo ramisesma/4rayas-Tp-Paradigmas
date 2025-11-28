@@ -9,6 +9,7 @@ object menu {
 
   method iniciar () {
     game.addVisual(self)
+
     keyboard.enter().onPressDo({ self.mostrarControles() })
     }
 

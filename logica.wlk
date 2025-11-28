@@ -7,6 +7,7 @@ import menu.*
 object logica {
     const casillerosLibres  = new Dictionary ()
     const columnasOcupadas = []
+    const musicaMenu = game.sound("musicaMenu.mp3")
     var juegoActivo = false
     const pantallaEmpate = new Pantalla (tematicaPantalla = "empate")
     const pantallaColumnaOcupada = new PantallaColumnaOcupada (tematicaPantalla = "columnaOcupada")
@@ -17,13 +18,16 @@ object logica {
     ]
     var indiceTurnos = 0
 
-
     method cargarLogica() {
         self.cargarCasillerosLibres()
         jugadores.forEach{j => j.cargarPosiciones()}
         juegoActivo = true 
+  
+        musicaMenu.shouldLoop(true)
+        musicaMenu.volume(0.05)
+        musicaMenu.play() 
+    
     }
-
 
     method cargarCasillerosLibres () {
         (0..6).forEach{n =>
@@ -59,6 +63,10 @@ object logica {
         if (_jugadorActual.esGanador(columna, fila)) {
             console.println("Es ganador el jugador: " + _jugadorActual.color())
             juegoActivo = false // desactivar el juego cuando hay ganador
+
+            musicaMenu.stop()
+
+
             self.mostrarPantallaGanador(_jugadorActual.tematica())
         } else {
             self.ocuparFila(columna, fila)
@@ -70,6 +78,7 @@ object logica {
             if (columnasOcupadas.size() == 7) {
                 console.println("¡Empate!")
                 juegoActivo = false // desactivar el juego cuando hay empate
+                musicaMenu.stop()
                 pantallaEmpate.mostrar()
             } else {
                 self.cambiarTurno()
@@ -96,6 +105,7 @@ object logica {
         jugadores.forEach{j => j.limpiar()}
         indiceTurnos = 0
         juegoActivo = false // Desactivar el juego al limpiar
+
     }
 
     method volverAJugar () {
@@ -122,6 +132,7 @@ class Jugador{
     }
 
     method guardarPosicion(columna, fila) {
+
         tablero.mostrarJugada(color, columna, fila)
         self.setearPosicionEnDiccionario(columna, fila)
     }
