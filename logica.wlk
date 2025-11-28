@@ -6,60 +6,63 @@ import menu.* // Importa menu, pantallaGanador y pantallaEmpate
 //lógica del juego
 object logica {
     const casillerosLibres  = new Dictionary ()
-    const columnasOcupadas = [] 
+    const columnasOcupadas = []
     var juegoActivo = false // Controla si se puede jugar o no
+    const pantallaEmpate = new Pantalla (tematicaPantalla = "empate")
+    const pantallaColumnaOcupada = new PantallaColumnaOcupada (tematicaPantalla = "columnaOcupada")
 
     var jugadores = [
-        new Jugador (color = "rojo"), 
-        new Jugador (color ="azul")
+        new Jugador (color = "rojo", tematica = new Pantalla (tematicaPantalla = "ganadorRojo")),
+        new Jugador (color ="azul", tematica = new Pantalla (tematicaPantalla = "ganadorAzul"))
     ]
     var indiceTurnos = 0
 
-    
+
     method cargarLogica() {
         self.cargarCasillerosLibres()
         jugadores.forEach{j => j.cargarPosiciones()}
         juegoActivo = true // Activar el juego cuando se carga
-        //Acá se podría crear las instancias de las clases 
+        // const pantallaEmpate =
+        //Acá se podría crear las instancias de las clases
     }
 
 
     method cargarCasillerosLibres () {
-        (0..6).forEach{n => 
+        (0..6).forEach{n =>
             casillerosLibres.put(n, utils.nuevaLista(5))
         }
     }
-    
+
     method estaOcupada (columna) = columnasOcupadas.contains(columna)
-    
+
     method ocuparColumna(columna) {
         columnasOcupadas.add(columna)
     }
-    
 
-    method ocuparFila(columna, fila) { 
+
+    method ocuparFila(columna, fila) {
         utils.obtenerColumna(columna, casillerosLibres).remove(fila)
     }
-    
+
     method quiereJugar (columna) {
         // Solo permitir jugar si el juego está activo
         if (juegoActivo) {
             if (self.estaOcupada(columna)) {
-                mensajeColumnaOcupada.mostrar()
+                pantallaColumnaOcupada.mostrar()
             } else {
                 self.juegaTurno(self.jugadorActual(), columna)
             }
         }
     }
-    
+
     method juegaTurno(_jugadorActual, columna) {
-        const fila = utils.obtenerColumna(columna, casillerosLibres).last() 
+        const fila = utils.obtenerColumna(columna, casillerosLibres).last()
         _jugadorActual.guardarPosicion(columna, fila)
-        
+
         if (_jugadorActual.esGanador(columna, fila)) {
             console.println("Es ganador el jugador: " + _jugadorActual.color())
             juegoActivo = false // Desactivar el juego cuando hay ganador
-            self.mostrarPantallaGanador(_jugadorActual.color())
+            self.mostrarPantallaGanador(_jugadorActual.tematica())
         } else {
             self.ocuparFila(columna, fila)
             // Verificar si la columna está llena
@@ -77,22 +80,26 @@ object logica {
         }
     }
 
-    method mostrarPantallaGanador(color) {
-        if (color == "rojo") {
-            pantallaGanadorRojo.mostrar()
-        } else {
-            pantallaGanadorAzul.mostrar()
-        }
+    // method mostrarPantallaGanador(color) {
+    //     if (color == "rojo") {
+    //         pantallaGanadorRojo.mostrar()
+    //     } else {
+    //         pantallaGanadorAzul.mostrar()
+    //     }
+
+    // }
+    method mostrarPantallaGanador(tematica) {
+        tematica.mostrar()
     }
 
     //manejo de turnos
     method cambiarTurno() {
         indiceTurnos = (indiceTurnos+1) % jugadores.size()
     }
-    
+
     method jugadorActual () = jugadores.get(indiceTurnos)
 
-    //limpia el estado interno de la lógica del juego, en caso de que el juego tenga un ganador 
+    //limpia el estado interno de la lógica del juego, en caso de que el juego tenga un ganador
     method limpiar () {
         casillerosLibres.clear()
         columnasOcupadas.clear()
@@ -110,15 +117,16 @@ object logica {
     method volverACrear() {
         self.cargarLogica()
         tablero.iniciarTablero()
-    }    
+    }
 }
 
 class Jugador{
     var property color //string, NO objeto
+    var property tematica
     const posicionesOcupadas  = new Dictionary ()
 
     method cargarPosiciones() {
-        (0..6).forEach{n => 
+        (0..6).forEach{n =>
             posicionesOcupadas.put(n, utils.listVacia(5))
         }
     }
@@ -127,7 +135,7 @@ class Jugador{
         tablero.mostrarJugada(color, columna, fila)
         self.setearPosicionEnDiccionario(columna, fila)
     }
-    
+
     method setearPosicionEnDiccionario(columna, fila) {
         const listaVieja = posicionesOcupadas.get(columna)
         const nuevaLista = []
@@ -140,14 +148,14 @@ class Jugador{
         }
         posicionesOcupadas.put(columna, nuevaLista)
     }
-    
+
     method esGanador (columna, fila) = verificador.verificarAlgunaCombinacion(columna, fila, posicionesOcupadas)
-        
+
     method estaOcupada(columna, fila) {
         const lista = posicionesOcupadas.get(columna)
         return lista.get(fila) == 1
     }
-    
+
     //limpia el estado interno de un jugador, el diccionario de posiciones ocupadas
     method limpiar() {
         posicionesOcupadas.clear()
@@ -155,7 +163,7 @@ class Jugador{
 }
 
 class Color {
-    var property color  
-    var property position  
+    var property color
+    var property position
     method image () = color + ".png"
 }

@@ -10,6 +10,5 @@ program cuatroEnRaya {
 
     // Iniciar el menú principal
     menu.iniciar()
-
     game.start()
 }
