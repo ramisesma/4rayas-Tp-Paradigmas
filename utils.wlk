@@ -1,5 +1,4 @@
-
-    import logica.*
+import logica.*
     import wollok.game.*
     object utils {
         method nuevaLista(size) {
@@ -16,10 +15,42 @@
         
         method obtenerFilaMatriz (fila, matriz) = (0..6).map{ c => matriz.get(c).get(fila) }
         method obtenerColumna(columna, matriz) = matriz.get(columna)
+        
+        // Método para obtener diagonal ascendente (de abajo-izquierda a arriba-derecha)
+        method obtenerDiagonalAscendente(columna, fila, matriz) {
+            // Calcular el punto de inicio de la diagonal (abajo-izquierda)
+            const diferencia = columna.min(fila)
+            const cInicio = columna - diferencia
+            const fInicio = fila - diferencia
+            
+            // Calcular cuántas posiciones tiene esta diagonal
+            const longitud = (6 - cInicio + 1).min(5 - fInicio + 1)
+            
+            // Recolectar la diagonal
+            return (0..longitud-1).map{ i => matriz.get(cInicio + i).get(fInicio + i) }
+        }
+        
+        // Método para obtener diagonal descendente (de arriba-izquierda a abajo-derecha)
+        method obtenerDiagonalDescendente(columna, fila, matriz) {
+            // Calcular el punto de inicio de la diagonal (arriba-izquierda)
+            const diferencia = columna.min(5 - fila)
+            const cInicio = columna - diferencia
+            const fInicio = fila + diferencia
+            
+            // Calcular cuántas posiciones tiene esta diagonal
+            const longitud = (6 - cInicio + 1).min(fInicio + 1)
+            
+            // Recolectar la diagonal
+            return (0..longitud-1).map{ i => matriz.get(cInicio + i).get(fInicio - i) }
+        }
     }
 
     object verificador {
-        method verificarAlgunaCombinacion (columna, fila, matriz) = horizontal.esCombinacion(columna, fila, matriz) or vertical.esCombinacion(columna, fila, matriz) 
+        method verificarAlgunaCombinacion (columna, fila, matriz) = 
+            horizontal.esCombinacion(columna, fila, matriz) or 
+            vertical.esCombinacion(columna, fila, matriz) or
+            diagonalAscendente.esCombinacion(columna, fila, matriz) or
+            diagonalDescendente.esCombinacion(columna, fila, matriz)
     } 
 
     class Trayectoria {
@@ -49,55 +80,29 @@
     }
 
     object horizontal inherits Trayectoria {
-
-    override method esCombinacion (columna, fila, matriz) {
+        override method esCombinacion (columna, fila, matriz) {
             const f = utils.obtenerFilaMatriz(fila, matriz)
             return self.hayCuatroEnLinea(f)
         }
     }
+    
     object vertical inherits Trayectoria {
         override method esCombinacion (columna, fila, matriz) {
             const c = utils.obtenerColumna(columna, matriz)
             return self.hayCuatroEnLinea(c)        
         }
     }
-
-    object diagonales inherits Trayectoria{
-        //debe ser recursivo, si la columna no es la 6ta o la fila la 5ta, se volvería a llamar y buscar el valor de esa posición
-        method obtenerLaSiguiente(columna, fila, matriz, _diagonal) {
-            var c 
-            var v 
-            if (columna == 6 or fila == 5) {
-                c = utils.obtenerColumna(columna, matriz)
-                v = c.get(fila)
-                _diagonal.add(v)
-                return _diagonal
-            } else {
-                c = utils.obtenerColumna(columna+1, matriz)
-                v = c.get(fila+1)
-                _diagonal.add(v)
-                return self.obtenerLaSiguiente(columna+1, fila+1, matriz, _diagonal)
-            }       
-
-        }
     
+    object diagonalAscendente inherits Trayectoria {
         override method esCombinacion (columna, fila, matriz) {
-            var diagonal = []
-            //esta lista binaria que generamos, va a tener solo 6 elementos o depende
-            // para la primera diagonal (de izquierda a derecha desde abajo)
-            //voy a necesitar saber en que punto x, y de la matriz estoy y de ahí calcular n en escalera
-                //estoy por ejemplo en la segunda columna (1) y 6ta fila (6) .:.
-                //Desplazarse hacia abajo e izquierda el número de columnas 
-            //la inicial, sea cual sea el caso, ya hice el desplazamiento hacia la izquierda 
-
-            const colInicial  = utils.obtenerColumna(0, matriz)           
-            var v = colInicial.get(fila-columna) // con esto ya me debería haber desplazado hacia abajo el número de veces que me desplace para la columna 
-            diagonal.add(v) //agrego el binario incial a la diagonal
-            diagonal = self.obtenerLaSiguiente(0, fila-columna, matriz, diagonal)
-            return self.hayCuatroEnLinea(diagonal)
+            const d = utils.obtenerDiagonalAscendente(columna, fila, matriz)
+            return self.hayCuatroEnLinea(d)
         }
-
-        //debe retornar el número de fila, ya que la columna va a ser siempre 0
-        method calcularInicioDiagonal (c, f)  = if (c > 0 and f > 0) self.calcularInicioDiagonal(c-1, f-1) else f 
     }
-
+    
+    object diagonalDescendente inherits Trayectoria {
+        override method esCombinacion (columna, fila, matriz) {
+            const d = utils.obtenerDiagonalDescendente(columna, fila, matriz)
+            return self.hayCuatroEnLinea(d)
+        }
+    }

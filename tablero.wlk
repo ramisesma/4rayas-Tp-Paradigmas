@@ -58,9 +58,6 @@ object tablero {
         return posicionesTablero.get(fila).get(columna)
     }
     
-    method imprimirGanador(_color) {
-        game.say(self, "¡Ganador: " + _color + "!")
-    }
 
     //debería limpiar las visuales de todas las fichas
     method volverAJugar (){
